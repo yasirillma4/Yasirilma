@@ -1,0 +1,1 @@
+Nothing should be ignored based on the provided file changes. The only added file is 'solar-system.html', which appears to be a source/html file and not a build artifact, dependency, or temporary file. Therefore, no .gitignore rules need to be added.
