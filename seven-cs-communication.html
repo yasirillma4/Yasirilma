@@ -3,752 +3,939 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Seven C's of Effective Communication</title>
+    <title>The Seven C's of Effective Communication | Interactive Study</title>
+    
+    <!-- Professional Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
         :root {
-            --primary: #2563eb;
-            --secondary: #1e40af;
-            --accent: #f59e0b;
-            --bg: #f8fafc;
-            --text: #1e293b;
-            --card-bg: #ffffff;
-            --success: #10b981;
-            --error: #ef4444;
+            --bg-deep: #0f1115;
+            --bg-surface: #161920;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --accent-gold: #d4af37;
+            --accent-blue: #3b82f6;
+            --accent-emerald: #10b981;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --noise-opacity: 0.04;
+            --transition-smooth: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            box-sizing: border-box;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        /* --- Noise Overlay for Texture --- */
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: var(--noise-opacity);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* --- Dynamic Background Canvas --- */
+        #network-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        /* --- Layout & Typography --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        section {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-
-        /* Header */
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 2rem 1rem;
-            text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-
-        header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Main Layout */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-            padding: 2rem;
-            gap: 2rem;
-        }
-
-        @media (min-width: 768px) {
-            main {
-                flex-direction: row;
-                align-items: flex-start;
-            }
-        }
-
-        /* Navigation Grid */
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 1rem;
-            width: 100%;
-            flex-shrink: 0;
-        }
-
-        @media (min-width: 768px) {
-            .nav-grid {
-                grid-template-columns: 1fr;
-                width: 250px;
-                position: sticky;
-                top: 2rem;
-            }
-        }
-
-        .nav-btn {
-            background: var(--card-bg);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .nav-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-color: var(--primary);
-        }
-
-        .nav-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--secondary);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-
-        .nav-icon {
-            font-size: 1.5rem;
-        }
-
-        /* Content Area */
-        .content-area {
-            flex: 1;
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            min-height: 500px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .section {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            justify-content: center;
+            padding: 6rem 0;
         }
 
         .section-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+            margin-bottom: 4rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s var(--transition-smooth);
+        }
+
+        .section-header.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .eyebrow {
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 0.85rem;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+            display: block;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 1.1;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--bg);
-            padding-bottom: 1rem;
         }
 
-        .section-icon {
-            font-size: 3rem;
-            background: var(--bg);
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            color: var(--primary);
+        h2 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 1rem;
         }
 
-        .section-title h2 {
-            font-size: 2rem;
-            color: var(--primary);
-        }
-
-        .section-title span {
-            color: #64748b;
-            font-style: italic;
-        }
-
-        /* Content Blocks */
-        .info-block {
-            margin-bottom: 2rem;
-        }
-
-        .info-block h3 {
-            color: var(--secondary);
-            margin-bottom: 0.5rem;
+        p.lead {
             font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            font-weight: 300;
         }
 
-        .info-block p {
-            line-height: 1.6;
-            color: #475569;
-            margin-bottom: 0.5rem;
+        /* --- Hero Section --- */
+        .hero {
+            align-items: flex-start;
+            position: relative;
         }
 
-        /* Comparison Slider/Card */
-        .comparison-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 1rem;
-            background: var(--bg);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
-        }
-
-        .comp-side {
-            padding: 1.5rem;
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            right: 2rem;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            align-items: center;
+            gap: 1rem;
+            opacity: 0.6;
+            animation: bounce 2s infinite;
         }
 
-        .comp-bad {
-            background: #fef2f2;
-            border-left: 4px solid var(--error);
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--accent-gold), transparent);
         }
 
-        .comp-good {
-            background: #f0fdf4;
-            border-left: 4px solid var(--success);
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
         }
 
-        .comp-label {
-            font-weight: 700;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        /* --- Navigation Dots --- */
+        .nav-dots {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            z-index: 100;
         }
 
-        .comp-bad .comp-label { color: var(--error); }
-        .comp-good .comp-label { color: var(--success); }
-
-        .comp-text {
-            font-style: italic;
-            font-size: 1.1rem;
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
-        .comp-analysis {
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            color: #64748b;
-            background: rgba(255,255,255,0.6);
-            padding: 0.5rem;
-            border-radius: 6px;
+        .dot::after {
+            content: attr(data-label);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%) translateX(10px);
+            background: var(--bg-surface);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            border: 1px solid var(--glass-border);
         }
 
-        /* Real World Card */
-        .real-world-card {
-            background: linear-gradient(135deg, #eff6ff, #ffffff);
-            border: 1px solid #bfdbfe;
+        .dot:hover::after {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .dot.active {
+            background: var(--accent-gold);
+            transform: scale(1.3);
+        }
+
+        /* --- Cards & Grid --- */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem;
             border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
+            backdrop-filter: blur(12px);
+            transition: all 0.4s var(--transition-smooth);
             position: relative;
             overflow: hidden;
+            group: card;
         }
 
-        .real-world-card::before {
-            content: '💡';
+        .card::before {
+            content: '';
             position: absolute;
-            top: -10px;
-            right: -10px;
-            font-size: 4rem;
-            opacity: 0.1;
-            transform: rotate(15deg);
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+            transform: scaleX(0);
+            transition: transform 0.6s var(--transition-smooth);
         }
 
-        .real-world-card h4 {
-            color: var(--secondary);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
-        /* Intro Section Specifics */
-        .intro-grid {
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-icon {
+            margin-bottom: 1.5rem;
+            color: var(--accent-gold);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Detailed View (The 7 Cs) --- */
+        .detail-view {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
             margin-top: 2rem;
         }
 
-        .intro-card {
-            background: var(--bg);
-            padding: 1.5rem;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid #e2e8f0;
+        @media (max-width: 900px) {
+            .detail-view {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
         }
 
-        .intro-card strong {
-            color: var(--primary);
-            font-size: 1.2rem;
+        .info-panel {
+            padding-right: 2rem;
+        }
+
+        .visual-panel {
+            position: relative;
+            height: 400px;
+            background: var(--bg-surface);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Comparison Slider Component */
+        .comparison-slider {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .comp-side {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: clip-path 0.1s linear; /* Smooth JS animation */
+        }
+
+        .comp-bad {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+            z-index: 1;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .comp-good {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            z-index: 2;
+        }
+
+        .slider-handle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border-radius: 50%;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            cursor: ew-resize;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            pointer-events: none; /* Let JS handle drag */
+        }
+
+        .comp-label {
+            position: absolute;
+            top: 1rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            background: rgba(0,0,0,0.6);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .lbl-bad { left: 1rem; color: #ef4444; }
+        .lbl-good { right: 1rem; color: #10b981; }
+
+        .example-box {
+            background: rgba(0,0,0,0.3);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 3px solid currentColor;
+        }
+
+        .example-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .example-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-style: italic;
+        }
+
+        /* Real World Badge */
+        .real-world-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            margin-top: 1.5rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        /* References Section */
+        .ref-list {
+            list-style: none;
+            counter-reset: ref-counter;
+        }
+
+        .ref-list li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .ref-list li::before {
+            counter-increment: ref-counter;
+            content: "[" counter(ref-counter) "]";
+            position: absolute;
+            left: 0;
+            color: var(--accent-gold);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
         }
 
         /* Footer */
         footer {
+            padding: 4rem 0;
+            border-top: 1px solid var(--glass-border);
             text-align: center;
-            padding: 2rem;
-            color: #64748b;
+            color: var(--text-secondary);
             font-size: 0.9rem;
-            border-top: 1px solid #e2e8f0;
-            margin-top: auto;
         }
 
-        .references {
-            font-size: 0.8rem;
-            margin-top: 1rem;
-            color: #94a3b8;
+        /* Utility Animations */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s var(--transition-smooth);
         }
-
-        /* Animations for icons */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
-        
-        .nav-btn.active .nav-icon {
-            animation: pulse 2s infinite;
-        }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
 
     </style>
 </head>
 <body>
 
-<header>
-    <h1>The Seven C's of Communication</h1>
-    <p>An interactive guide to Clarity, Conciseness, Concreteness, Correctness, Coherence, Completeness, and Courtesy.</p>
-</header>
+    <!-- Noise Texture -->
+    <div class="noise-overlay"></div>
+    
+    <!-- Dynamic Background -->
+    <canvas id="network-canvas"></canvas>
 
-<main>
-    <!-- Navigation -->
-    <nav class="nav-grid">
-        <button class="nav-btn active" onclick="showSection('intro')">
-            <span class="nav-icon">🏠</span>
-            <span>Introduction</span>
-        </button>
-        <button class="nav-btn" onclick="showSection('clarity')">
-            <span class="nav-icon">🔍</span>
-            <span>Clarity</span>
-        </button>
-        <button class="nav-btn" onclick="showSection('conciseness')">
-            <span class="nav-icon">⏱️</span>
-            <span>Conciseness</span>
-        </button>
-        <button class="nav-btn" onclick="showSection('concreteness')">
-            <span class="nav-icon">📊</span>
-            <span>Concreteness</span>
-        </button>
-        <button class="nav-btn" onclick="showSection('correctness')">
-            <span class="nav-icon">✅</span>
-            <span>Correctness</span>
-        </button>
-        <button class="nav-btn" onclick="showSection('coherence')">
-            <span class="nav-icon">🔗</span>
-            <span>Coherence</span>
-        </button>
-        <button class="nav-btn" onclick="showSection('completeness')">
-            <span class="nav-icon">🧩</span>
-            <span>Completeness</span>
-        </button>
-        <button class="nav-btn" onclick="showSection('courtesy')">
-            <span class="nav-icon">🤝</span>
-            <span>Courtesy</span>
-        </button>
-    </nav>
+    <!-- Navigation Dots -->
+    <div class="nav-dots">
+        <div class="dot active" data-target="hero" data-label="Home"></div>
+        <div class="dot" data-target="overview" data-label="Overview"></div>
+        <div class="dot" data-target="clarity" data-label="Clarity"></div>
+        <div class="dot" data-target="conciseness" data-label="Conciseness"></div>
+        <div class="dot" data-target="concreteness" data-label="Concreteness"></div>
+        <div class="dot" data-target="correctness" data-label="Correctness"></div>
+        <div class="dot" data-target="coherence" data-label="Coherence"></div>
+        <div class="dot" data-target="completeness" data-label="Completeness"></div>
+        <div class="dot" data-target="courtesy" data-label="Courtesy"></div>
+        <div class="dot" data-target="references" data-label="References"></div>
+    </div>
 
-    <!-- Content Area -->
-    <div class="content-area">
-        
-        <!-- Introduction Section -->
-        <div id="intro" class="section active">
-            <div class="section-header">
-                <div class="section-icon">📘</div>
-                <div class="section-title">
-                    <h2>Introduction</h2>
-                    <span>Understanding Effective Communication</span>
-                </div>
-            </div>
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="container">
+            <span class="eyebrow fade-up">University Assignment</span>
+            <h1 class="fade-up delay-1">The Seven C's of<br>Effective Communication</h1>
+            <p class="lead fade-up delay-2">An interactive exploration of the principles that ensure messages are understood clearly, accurately, and respectfully.</p>
             
-            <div class="info-block">
-                <h3>What is Effective Communication?</h3>
-                <p>Communication is an important part of our daily life. We communicate with teachers, classmates, friends, family members, and other people to share ideas, information, thoughts, and feelings.</p>
-                <p><strong>Effective communication</strong> means delivering a message in such a way that the receiver understands it clearly and correctly. In simple words, communication is effective when <em>the receiver understands the message in the way the sender intended</em>.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>The Seven Principles</h3>
-                <p>The Seven C's are important principles that help us communicate in a clear, effective, and respectful way.</p>
-                <div class="intro-grid">
-                    <div class="intro-card"><strong>Clarity</strong><br>Easy to understand</div>
-                    <div class="intro-card"><strong>Conciseness</strong><br>Short & meaningful</div>
-                    <div class="intro-card"><strong>Concreteness</strong><br>Specific facts</div>
-                    <div class="intro-card"><strong>Correctness</strong><br>Accurate info</div>
-                    <div class="intro-card"><strong>Coherence</strong><br>Logical flow</div>
-                    <div class="intro-card"><strong>Completeness</strong><br>All details included</div>
-                    <div class="intro-card"><strong>Courtesy</strong><br>Polite & respectful</div>
-                </div>
-            </div>
-
-            <div class="real-world-card">
-                <h4>🌟 Why It Matters</h4>
-                <p>By following the Seven C's, a person can communicate more clearly, confidently, accurately, and respectfully. These principles reduce confusion, save time, improve accuracy, and create a positive impression in education, professional life, and daily interactions.</p>
+            <div class="scroll-indicator">
+                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;">Scroll to Explore</span>
+                <div class="scroll-line"></div>
             </div>
         </div>
+    </section>
 
-        <!-- Clarity Section -->
-        <div id="clarity" class="section">
+    <!-- Overview Section -->
+    <section id="overview">
+        <div class="container">
             <div class="section-header">
-                <div class="section-icon">🔍</div>
-                <div class="section-title">
+                <span class="eyebrow">Introduction</span>
+                <h2>Why Communication Matters</h2>
+                <p class="lead">Effective communication is not just about speaking or writing. It is about ensuring the receiver understands the message exactly as the sender intended.</p>
+            </div>
+
+            <div class="grid-3">
+                <div class="card fade-up">
+                    <div class="card-icon"><i data-lucide="target" size="32"></i></div>
+                    <h3>Clarity of Purpose</h3>
+                    <p>Reducing ambiguity ensures the core message lands without confusion or misinterpretation.</p>
+                </div>
+                <div class="card fade-up delay-1">
+                    <div class="card-icon"><i data-lucide="clock" size="32"></i></div>
+                    <h3>Efficiency</h3>
+                    <p>Concise and coherent communication saves time for both the sender and the receiver.</p>
+                </div>
+                <div class="card fade-up delay-2">
+                    <div class="card-icon"><i data-lucide="handshake" size="32"></i></div>
+                    <h3>Relationship Building</h3>
+                    <p>Courtesy and correctness foster trust and professionalism in academic and business settings.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 1. Clarity -->
+    <section id="clarity">
+        <div class="container">
+            <div class="detail-view">
+                <div class="info-panel fade-up">
+                    <span class="eyebrow">01 / The Seven C's</span>
                     <h2>Clarity</h2>
-                    <span>Making the message easy to understand</span>
-                </div>
-            </div>
-
-            <div class="info-block">
-                <h3>Meaning</h3>
-                <p>Clarity means that a message should be easy to understand. The speaker or writer should use simple and direct words and avoid confusing language.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>Why It Is Important</h3>
-                <p>Clear communication reduces misunderstanding and helps the receiver understand the main idea quickly.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>Example Comparison</h3>
-                <div class="comparison-container">
-                    <div class="comp-side comp-bad">
-                        <span class="comp-label">Unclear</span>
-                        <span class="comp-text">"Submit your assignment soon."</span>
-                        <div class="comp-analysis">Vague deadline causes confusion.</div>
-                    </div>
-                    <div class="comp-side comp-good">
-                        <span class="comp-label">Clear</span>
-                        <span class="comp-text">"Submit your assignment by Friday."</span>
-                        <div class="comp-analysis">Specific deadline removes doubt.</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                        Clarity means the message is easy to understand. It focuses on a single purpose and uses simple, direct language to avoid confusion.
+                    </p>
+                    
+                    <div class="real-world-badge">
+                        <i data-lucide="signpost" size="16"></i>
+                        <span>Real World: Road signs saying "STOP"</span>
                     </div>
                 </div>
-            </div>
-
-            <div class="real-world-card">
-                <h4>🚦 Real-World Example</h4>
-                <p>A road sign saying <strong>"STOP"</strong> is an example of clarity. It gives a direct instruction that drivers can understand immediately without needing interpretation.</p>
+                
+                <div class="visual-panel fade-up delay-1">
+                    <div class="comparison-slider" id="slider-clarity">
+                        <div class="comp-side comp-bad" style="clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);">
+                            <span class="comp-label lbl-bad">Unclear</span>
+                            <div class="example-box">
+                                <span class="example-title">Vague Instruction</span>
+                                <p class="example-text">"Submit your assignment soon."</p>
+                            </div>
+                        </div>
+                        <div class="comp-side comp-good">
+                            <span class="comp-label lbl-good">Clear</span>
+                            <div class="example-box">
+                                <span class="example-title">Specific Deadline</span>
+                                <p class="example-text">"Submit your assignment by Friday, 5 PM."</p>
+                            </div>
+                        </div>
+                        <div class="slider-handle"><i data-lucide="arrows-left-right" size="20"></i></div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <!-- Conciseness Section -->
-        <div id="conciseness" class="section">
-            <div class="section-header">
-                <div class="section-icon">⏱️</div>
-                <div class="section-title">
+    <!-- 2. Conciseness -->
+    <section id="conciseness">
+        <div class="container">
+            <div class="detail-view">
+                <div class="info-panel fade-up">
+                    <span class="eyebrow">02 / The Seven C's</span>
                     <h2>Conciseness</h2>
-                    <span>Saying more with less</span>
-                </div>
-            </div>
-
-            <div class="info-block">
-                <h3>Meaning</h3>
-                <p>Conciseness means expressing a message in a short and meaningful way. Unnecessary words, repetition, and extra details should be avoided.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>Why It Is Important</h3>
-                <p>Concise communication saves time and keeps the receiver focused on the main message.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>Example Comparison</h3>
-                <div class="comparison-container">
-                    <div class="comp-side comp-bad">
-                        <span class="comp-label">Wordy</span>
-                        <span class="comp-text">"Due to the fact that the exam is near, it is necessary that students should prepare for it."</span>
-                        <div class="comp-analysis">Redundant phrases waste time.</div>
-                    </div>
-                    <div class="comp-side comp-good">
-                        <span class="comp-label">Concise</span>
-                        <span class="comp-text">"Students should prepare because the exam is near."</span>
-                        <div class="comp-analysis">Direct and impactful.</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                        Saying more with less. Conciseness eliminates unnecessary words and repetition while retaining the full meaning.
+                    </p>
+                    <div class="real-world-badge">
+                        <i data-lucide="zap" size="16"></i>
+                        <span>Real World: Nike's "Just Do It"</span>
                     </div>
                 </div>
-            </div>
-
-            <div class="real-world-card">
-                <h4>🍔 Real-World Example</h4>
-                <p>The advertising slogan <strong>"I'm Lovin' It"</strong> is an example of concise communication. It uses only a few words to express a simple and positive message that sticks in your mind.</p>
+                <div class="visual-panel fade-up delay-1">
+                    <div class="comparison-slider" id="slider-conciseness">
+                        <div class="comp-side comp-bad" style="clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);">
+                            <span class="comp-label lbl-bad">Wordy</span>
+                            <div class="example-box">
+                                <span class="example-title">Redundant</span>
+                                <p class="example-text">"Due to the fact that the exam is near, it is necessary that students should prepare."</p>
+                            </div>
+                        </div>
+                        <div class="comp-side comp-good">
+                            <span class="comp-label lbl-good">Concise</span>
+                            <div class="example-box">
+                                <span class="example-title">Direct</span>
+                                <p class="example-text">"Students should prepare because the exam is near."</p>
+                            </div>
+                        </div>
+                        <div class="slider-handle"><i data-lucide="arrows-left-right" size="20"></i></div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <!-- Concreteness Section -->
-        <div id="concreteness" class="section">
-            <div class="section-header">
-                <div class="section-icon">📊</div>
-                <div class="section-title">
+    <!-- 3. Concreteness -->
+    <section id="concreteness">
+        <div class="container">
+            <div class="detail-view">
+                <div class="info-panel fade-up">
+                    <span class="eyebrow">03 / The Seven C's</span>
                     <h2>Concreteness</h2>
-                    <span>Specific facts over vague ideas</span>
-                </div>
-            </div>
-
-            <div class="info-block">
-                <h3>Meaning</h3>
-                <p>Concreteness means giving specific and definite information instead of using vague or general statements. Facts, figures, dates, times, and examples make communication stronger.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>Why It Is Important</h3>
-                <p>Concrete information makes a message clearer, more useful, and more believable.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>Example Comparison</h3>
-                <div class="comparison-container">
-                    <div class="comp-side comp-bad">
-                        <span class="comp-label">Vague</span>
-                        <span class="comp-text">"Many students passed the exam."</span>
-                        <div class="comp-analysis">"Many" is subjective.</div>
-                    </div>
-                    <div class="comp-side comp-good">
-                        <span class="comp-label">Concrete</span>
-                        <span class="comp-text">"80% of the students passed the exam."</span>
-                        <div class="comp-analysis">Exact data builds trust.</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                        Being specific and definite. Concrete communication uses facts, figures, and vivid words rather than vague generalizations.
+                    </p>
+                    <div class="real-world-badge">
+                        <i data-lucide="package" size="16"></i>
+                        <span>Real World: "Delivery in 25 mins"</span>
                     </div>
                 </div>
-            </div>
-
-            <div class="real-world-card">
-                <h4>🛵 Real-World Example</h4>
-                <p>A food delivery app showing <strong>"Delivery in 25 minutes"</strong> is a concrete message. It gives a specific time instead of simply saying, "Your food will arrive soon," allowing you to plan accordingly.</p>
+                <div class="visual-panel fade-up delay-1">
+                    <div class="comparison-slider" id="slider-concreteness">
+                        <div class="comp-side comp-bad" style="clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);">
+                            <span class="comp-label lbl-bad">Vague</span>
+                            <div class="example-box">
+                                <span class="example-title">Generalization</span>
+                                <p class="example-text">"Many students passed the exam."</p>
+                            </div>
+                        </div>
+                        <div class="comp-side comp-good">
+                            <span class="comp-label lbl-good">Concrete</span>
+                            <div class="example-box">
+                                <span class="example-title">Data-Driven</span>
+                                <p class="example-text">"80% of the students passed the exam."</p>
+                            </div>
+                        </div>
+                        <div class="slider-handle"><i data-lucide="arrows-left-right" size="20"></i></div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <!-- Correctness Section -->
-        <div id="correctness" class="section">
-            <div class="section-header">
-                <div class="section-icon">✅</div>
-                <div class="section-title">
+    <!-- 4. Correctness -->
+    <section id="correctness">
+        <div class="container">
+            <div class="detail-view">
+                <div class="info-panel fade-up">
+                    <span class="eyebrow">04 / The Seven C's</span>
                     <h2>Correctness</h2>
-                    <span>Accuracy in facts and grammar</span>
-                </div>
-            </div>
-
-            <div class="info-block">
-                <h3>Meaning</h3>
-                <p>Correctness means that the information, grammar, spelling, and facts in a message should be accurate.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>Why It Is Important</h3>
-                <p>Correct communication creates a good impression and prevents mistakes and misunderstanding.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>Example Comparison</h3>
-                <div class="comparison-container">
-                    <div class="comp-side comp-bad">
-                        <span class="comp-label">Incorrect</span>
-                        <span class="comp-text">"The teacher say that tomorrow is holiday."</span>
-                        <div class="comp-analysis">Grammatical errors reduce credibility.</div>
-                    </div>
-                    <div class="comp-side comp-good">
-                        <span class="comp-label">Correct</span>
-                        <span class="comp-text">"The teacher says that tomorrow is a holiday."</span>
-                        <div class="comp-analysis">Proper grammar ensures professionalism.</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                        Ensuring accuracy in grammar, spelling, facts, and figures. Correctness builds credibility and prevents costly errors.
+                    </p>
+                    <div class="real-world-badge">
+                        <i data-lucide="shield-check" size="16"></i>
+                        <span>Real World: Exam Hall Tickets</span>
                     </div>
                 </div>
-            </div>
-
-            <div class="real-world-card">
-                <h4>🎓 Real-World Example</h4>
-                <p>A university examination notice must contain the <strong>correct date, time, and room number</strong>. Even one incorrect detail can create serious confusion for students and ruin their exam schedule.</p>
+                <div class="visual-panel fade-up delay-1">
+                    <div class="comparison-slider" id="slider-correctness">
+                        <div class="comp-side comp-bad" style="clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);">
+                            <span class="comp-label lbl-bad">Incorrect</span>
+                            <div class="example-box">
+                                <span class="example-title">Grammar Error</span>
+                                <p class="example-text">"The teacher say that tomorrow is holiday."</p>
+                            </div>
+                        </div>
+                        <div class="comp-side comp-good">
+                            <span class="comp-label lbl-good">Correct</span>
+                            <div class="example-box">
+                                <span class="example-title">Professional</span>
+                                <p class="example-text">"The teacher says that tomorrow is a holiday."</p>
+                            </div>
+                        </div>
+                        <div class="slider-handle"><i data-lucide="arrows-left-right" size="20"></i></div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <!-- Coherence Section -->
-        <div id="coherence" class="section">
-            <div class="section-header">
-                <div class="section-icon">🔗</div>
-                <div class="section-title">
+    <!-- 5. Coherence -->
+    <section id="coherence">
+        <div class="container">
+            <div class="detail-view">
+                <div class="info-panel fade-up">
+                    <span class="eyebrow">05 / The Seven C's</span>
                     <h2>Coherence</h2>
-                    <span>Logical flow of ideas</span>
-                </div>
-            </div>
-
-            <div class="info-block">
-                <h3>Meaning</h3>
-                <p>Coherence means that all ideas in a message should be connected and arranged in a logical order. The message should flow smoothly from one idea to another.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>Why It Is Important</h3>
-                <p>Coherent communication makes a message easier to follow and understand.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>Example Comparison</h3>
-                <div class="comparison-container">
-                    <div class="comp-side comp-bad">
-                        <span class="comp-label">Disconnected</span>
-                        <span class="comp-text">"I was sick. The class was online. My phone was not working."</span>
-                        <div class="comp-analysis">Ideas are isolated and confusing.</div>
-                    </div>
-                    <div class="comp-side comp-good">
-                        <span class="comp-label">Coherent</span>
-                        <span class="comp-text">"I could not attend the online class because I was sick and my phone was not working."</span>
-                        <div class="comp-analysis">Connectors explain the relationship between events.</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                        Logical flow. All ideas should be connected and arranged in a sequence that makes sense to the receiver.
+                    </p>
+                    <div class="real-world-badge">
+                        <i data-lucide="link" size="16"></i>
+                        <span>Real World: Storytelling Arcs</span>
                     </div>
                 </div>
-            </div>
-
-            <div class="real-world-card">
-                <h4>📺 Real-World Example</h4>
-                <p>A good advertisement usually presents its message in a logical order: <strong>first the problem, then the product, then how the product solves the problem, and finally the result</strong>. This structure makes the advertisement easy to follow and persuasive.</p>
+                <div class="visual-panel fade-up delay-1">
+                    <div class="comparison-slider" id="slider-coherence">
+                        <div class="comp-side comp-bad" style="clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);">
+                            <span class="comp-label lbl-bad">Disconnected</span>
+                            <div class="example-box">
+                                <span class="example-title">Fragmented</span>
+                                <p class="example-text">"I was sick. The class was online. My phone was not working."</p>
+                            </div>
+                        </div>
+                        <div class="comp-side comp-good">
+                            <span class="comp-label lbl-good">Connected</span>
+                            <div class="example-box">
+                                <span class="example-title">Logical Flow</span>
+                                <p class="example-text">"I could not attend the online class because I was sick and my phone failed."</p>
+                            </div>
+                        </div>
+                        <div class="slider-handle"><i data-lucide="arrows-left-right" size="20"></i></div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <!-- Completeness Section -->
-        <div id="completeness" class="section">
-            <div class="section-header">
-                <div class="section-icon">🧩</div>
-                <div class="section-title">
+    <!-- 6. Completeness -->
+    <section id="completeness">
+        <div class="container">
+            <div class="detail-view">
+                <div class="info-panel fade-up">
+                    <span class="eyebrow">06 / The Seven C's</span>
                     <h2>Completeness</h2>
-                    <span>Providing all necessary information</span>
-                </div>
-            </div>
-
-            <div class="info-block">
-                <h3>Meaning</h3>
-                <p>Completeness means providing all the necessary information that the receiver needs. A complete message should include important details such as what, when, where, who, and how, when necessary.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>Why It Is Important</h3>
-                <p>Complete communication prevents the receiver from having to ask for missing information.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>Example Comparison</h3>
-                <div class="comparison-container">
-                    <div class="comp-side comp-bad">
-                        <span class="comp-label">Incomplete</span>
-                        <span class="comp-text">"We have a meeting tomorrow."</span>
-                        <div class="comp-analysis">Missing time and location forces follow-up questions.</div>
-                    </div>
-                    <div class="comp-side comp-good">
-                        <span class="comp-label">Complete</span>
-                        <span class="comp-text">"We have a meeting tomorrow at 10:00 a.m. in Room No. 5."</span>
-                        <div class="comp-analysis">Provides all 5 Ws (What, When, Where).</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                        Providing all necessary information. A complete message answers Who, What, Where, When, Why, and How.
+                    </p>
+                    <div class="real-world-badge">
+                        <i data-lucide="clipboard-list" size="16"></i>
+                        <span>Real World: Event Invitations</span>
                     </div>
                 </div>
-            </div>
-
-            <div class="real-world-card">
-                <h4>📅 Real-World Example</h4>
-                <p>A university event poster is complete when it includes the <strong>event name, date, time, venue, registration details, and contact information</strong>. Students then have all the information they need to attend without confusion.</p>
+                <div class="visual-panel fade-up delay-1">
+                    <div class="comparison-slider" id="slider-completeness">
+                        <div class="comp-side comp-bad" style="clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);">
+                            <span class="comp-label lbl-bad">Incomplete</span>
+                            <div class="example-box">
+                                <span class="example-title">Missing Details</span>
+                                <p class="example-text">"We have a meeting tomorrow."</p>
+                            </div>
+                        </div>
+                        <div class="comp-side comp-good">
+                            <span class="comp-label lbl-good">Complete</span>
+                            <div class="example-box">
+                                <span class="example-title">All Details</span>
+                                <p class="example-text">"Meeting tomorrow at 10 AM in Room 5."</p>
+                            </div>
+                        </div>
+                        <div class="slider-handle"><i data-lucide="arrows-left-right" size="20"></i></div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <!-- Courtesy Section -->
-        <div id="courtesy" class="section">
-            <div class="section-header">
-                <div class="section-icon">🤝</div>
-                <div class="section-title">
+    <!-- 7. Courtesy -->
+    <section id="courtesy">
+        <div class="container">
+            <div class="detail-view">
+                <div class="info-panel fade-up">
+                    <span class="eyebrow">07 / The Seven C's</span>
                     <h2>Courtesy</h2>
-                    <span>Politeness and respect</span>
-                </div>
-            </div>
-
-            <div class="info-block">
-                <h3>Meaning</h3>
-                <p>Courtesy means communicating in a polite, respectful, and friendly manner. We should consider the feelings and opinions of others while communicating.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>Why It Is Important</h3>
-                <p>Courteous communication builds good relationships, shows good manners, and creates a positive environment.</p>
-            </div>
-
-            <div class="info-block">
-                <h3>Example Comparison</h3>
-                <div class="comparison-container">
-                    <div class="comp-side comp-bad">
-                        <span class="comp-label">Rude</span>
-                        <span class="comp-text">"Give me the notebook."</span>
-                        <div class="comp-analysis">Sounds like an order; feels aggressive.</div>
-                    </div>
-                    <div class="comp-side comp-good">
-                        <span class="comp-label">Courteous</span>
-                        <span class="comp-text">"Please give me the notebook."</span>
-                        <div class="comp-analysis">Simple addition of "Please" shows respect.</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                        Politeness and respect. Courteous communication considers the receiver's feelings and builds positive relationships.
+                    </p>
+                    <div class="real-world-badge">
+                        <i data-lucide="heart" size="16"></i>
+                        <span>Real World: Customer Support</span>
                     </div>
                 </div>
-            </div>
-
-            <div class="real-world-card">
-                <h4>🎧 Real-World Example</h4>
-                <p>A customer-service representative may say, <strong>"Thank you for contacting us. How may we help you?"</strong> This is courteous because it treats the customer with politeness and respect, setting a positive tone for the interaction.</p>
+                <div class="visual-panel fade-up delay-1">
+                    <div class="comparison-slider" id="slider-courtesy">
+                        <div class="comp-side comp-bad" style="clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);">
+                            <span class="comp-label lbl-bad">Rude</span>
+                            <div class="example-box">
+                                <span class="example-title">Demanding</span>
+                                <p class="example-text">"Give me the notebook."</p>
+                            </div>
+                        </div>
+                        <div class="comp-side comp-good">
+                            <span class="comp-label lbl-good">Polite</span>
+                            <div class="example-box">
+                                <span class="example-title">Respectful</span>
+                                <p class="example-text">"Could you please pass me the notebook?"</p>
+                            </div>
+                        </div>
+                        <div class="slider-handle"><i data-lucide="arrows-left-right" size="20"></i></div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-    </div>
-</main>
+    <!-- References -->
+    <section id="references">
+        <div class="container">
+            <div class="section-header">
+                <span class="eyebrow">Academic Sources</span>
+                <h2>References</h2>
+            </div>
+            <ul class="ref-list fade-up">
+                <li>Cutlip, S. M., Center, A. H., & Broom, G. M. <em>Effective Public Relations</em>.</li>
+                <li>Lesikar, R. V., Flatley, M. E., & Rentz, K. <em>Basic Business Communication</em>.</li>
+                <li>Guffey, M. E., & Loewy, D. <em>Essentials of Business Communication</em>.</li>
+            </ul>
+        </div>
+    </section>
 
-<footer>
-    <p>University Assignment: The Seven C's of Effective Communication</p>
-    <div class="references">
-        <p><strong>References:</strong></p>
-        <p>1. Cutlip, S. M., Center, A. H., & Broom, G. M. <em>Effective Public Relations</em>.</p>
-        <p>2. Lesikar, R. V., Flatley, M. E., & Rentz, K. <em>Basic Business Communication</em>.</p>
-        <p>3. Guffey, M. E., & Loewy, D. <em>Essentials of Business Communication</em>.</p>
-    </div>
-</footer>
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 University Assignment. Built with Interactive Web Technologies.</p>
+        </div>
+    </footer>
 
-<script>
-    function showSection(sectionId) {
-        // Hide all sections
-        document.querySelectorAll('.section').forEach(sec => {
-            sec.classList.remove('active');
-        });
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // --- 1. Dynamic Particle Network Background ---
+        const canvas = document.getElementById('network-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
         
-        // Remove active class from buttons
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-
-        // Show selected section
-        document.getElementById(sectionId).classList.add('active');
-        
-        // Add active class to clicked button
-        const activeBtn = Array.from(document.querySelectorAll('.nav-btn')).find(btn => 
-            btn.getAttribute('onclick').includes(sectionId)
-        );
-        if(activeBtn) activeBtn.classList.add('active');
-
-        // Scroll to top of content on mobile
-        if(window.innerWidth < 768) {
-            document.querySelector('.content-area').scrollIntoView({behavior: 'smooth'});
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
-    }
-</script>
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw();
+                // Draw connections
+                for (let j = index; j < particles.length; j++) {
+                    const dx = p.x - particles[j].x;
+                    const dy = p.y - particles[j].y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 150) {
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 - dist/1500})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // --- 2. Intersection Observer for Scroll Animations ---
+        const observerOptions = { threshold: 0.2 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Update Nav Dots
+                    document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
+                    const activeDot = document.querySelector(`.dot[data-target="${entry.target.id}"]`);
+                    if(activeDot) activeDot.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section, .fade-up, .section-header').forEach(el => {
+            observer.observe(el);
+        });
+
+        // --- 3. Smooth Scroll Navigation ---
+        document.querySelectorAll('.dot').forEach(dot => {
+            dot.addEventListener('click', () => {
+                const targetId = dot.getAttribute('data-target');
+                document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // --- 4. Interactive Comparison Sliders Logic ---
+        const sliders = document.querySelectorAll('.comparison-slider');
+        
+        sliders.forEach(slider => {
+            const badSide = slider.querySelector('.comp-bad');
+            const handle = slider.querySelector('.slider-handle');
+            let isDragging = false;
+
+            const moveSlider = (clientX) => {
+                const rect = slider.getBoundingClientRect();
+                let x = clientX - rect.left;
+                // Clamp
+                if (x < 0) x = 0;
+                if (x > rect.width) x = rect.width;
+                
+                const percent = (x / rect.width) * 100;
+                
+                // Update Clip Path for Bad Side (Left side reveals Good, hides Bad as we move right? 
+                // Actually, let's make the Bad side shrink from right to left)
+                badSide.style.clipPath = `polygon(0 0, ${percent}% 0, ${percent}% 100%, 0 100%)`;
+                handle.style.left = `${percent}%`;
+            };
+
+            // Mouse Events
+            slider.addEventListener('mousedown', () => isDragging = true);
+            window.addEventListener('mouseup', () => isDragging = false);
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                moveSlider(e.clientX);
+            });
+
+            // Touch Events
+            slider.addEventListener('touchstart', () => isDragging = true);
+            window.addEventListener('touchend', () => isDragging = false);
+            slider.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                moveSlider(e.touches[0].clientX);
+            });
+            
+            // Click to jump
+            slider.addEventListener('click', (e) => {
+                moveSlider(e.clientX);
+            });
+        });
+
+    </script>
 </body>
 </html>
